@@ -23,7 +23,7 @@ function getModel() {
 async function train(model, data) {
 	const metrics = ['loss', 'val_loss', 'accuracy', 'val_accuracy'];
 	const container = { name: 'Model Training', styles: { height: '640px' } };
-	const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
+	const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);  // Here visualization
   
 	const BATCH_SIZE = 512;
 	const TRAIN_DATA_SIZE = 5500;
@@ -50,7 +50,7 @@ async function train(model, data) {
 		validationData: [testXs, testYs],
 		epochs: 20,
 		shuffle: true,
-		callbacks: fitCallbacks
+		callbacks: fitCallbacks // here visualization
 	});
 }
 
@@ -69,7 +69,7 @@ function draw(e) {
 	setPosition(e);
 	ctx.lineTo(pos.x, pos.y);
 	ctx.stroke();
-	rawImage.src = canvas.toDataURL('image/png');
+	rawImage.src = canvas.toDataURL('image/png'); // rawImage is point to the html line 10
 }
     
 function erase() {
@@ -77,10 +77,10 @@ function erase() {
 	ctx.fillRect(0,0,280,280);
 }
     
-function save() {
-	var raw = tf.browser.fromPixels(rawImage,1);
+function save() { // from draw
+	var raw = tf.browser.fromPixels(rawImage,1); // 1 color channel
 	var resized = tf.image.resizeBilinear(raw, [28,28]);
-	var tensor = resized.expandDims(0);
+	var tensor = resized.expandDims(0); // 1 dem is number of images (batch)
     var prediction = model.predict(tensor);
     var pIndex = tf.argMax(prediction, 1).dataSync();
     
@@ -109,11 +109,11 @@ async function run() {
 	const model = getModel();
 	tfvis.show.modelSummary({name: 'Model Architecture'}, model);
 	await train(model, data);
-	init();
+	init(); // after train
 	alert("Training is done, try classifying your handwriting!");
 }
 
-document.addEventListener('DOMContentLoaded', run);
+document.addEventListener('DOMContentLoaded', run); // as soon as the html is loaded, it will call the run function
 
 
 

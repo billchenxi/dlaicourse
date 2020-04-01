@@ -2,10 +2,10 @@
 <head></head>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
     <script lang="js">
-        async function run(){
+        async function run(){ // read the iris , have to async function since we are waiting for the training
             const csvUrl = 'iris.csv';
             const trainingData = tf.data.csv(csvUrl, {
-                columnConfigs: {
+                columnConfigs: { // need to leave header line as label
                     species: {
                         isLabel: true
                     }
@@ -21,15 +21,16 @@
                             ys.species == "virginica" ? 1 : 0,
                             ys.species == "versicolor" ? 1 : 0
                       ] 
-                      return{ xs: Object.values(xs), ys: Object.values(labels)};
+                      return{ xs: Object.values(xs), ys: Object.values(labels)}; // The values that weren't flagged as labels are in the x's set. So if I call objects.values(xs) on that, I will get back an array of arrays of their values. Each row in the data set had four features giving me a 4 by 1 array. 
                   }).batch(10);
             
             const model = tf.sequential();
             model.add(tf.layers.dense({inputShape: [numOfFeatures], activation: "sigmoid", units: 5}))
-            model.add(tf.layers.dense({activation: "softmax", units: 3}));
+            model.add(tf.layers.dense({activation: "softmax", units: 3})); // 3 classes
             
             model.compile({loss: "categoricalCrossentropy", optimizer: tf.train.adam(0.06)});
-            
+            console.log(numOfFeatures);
+            model.summary();
             await model.fitDataset(convertedData, 
                              {epochs:100,
                               callbacks:{
